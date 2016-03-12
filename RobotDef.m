@@ -12,7 +12,7 @@ classdef RobotDef < handle
    end
    methods (Access=public)
        function robotDef = RobotDef(linkDefs)
-%           assert(linkDefs(1).IsOfClass('LinkDef')==0, 'Class type for link does not match');
+          assert(sum('LinkDef'==class(linkDefs(1)))==7, 'Class type for link does not match');
           robotDef.links = linkDefs;
           robotDef.num_links =length(linkDefs);
        end
