@@ -1,4 +1,4 @@
-classdef LinkDef
+classdef LinkDef < handle
     properties
         theta
         alpha

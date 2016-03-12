@@ -1,4 +1,4 @@
-classdef RobotDef
+classdef RobotDef < handle
    properties
        links
        num_links
@@ -19,7 +19,7 @@ classdef RobotDef
        
        function T = fwdKinematics(obj, jointStates)
           assert(length(jointStates)==obj.num_links, 'Number of joints do not match robot joints');
-          obj.updateJointState(obj, jointStates);
+          obj.updateJointState(jointStates);
           T = makehgtform;
           for i=1:obj.num_links
               T = T*obj.links(i).linkTransform();
