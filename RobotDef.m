@@ -12,7 +12,7 @@ classdef RobotDef < handle
    end
    methods (Access=public)
        function robotDef = RobotDef(linkDefs)
-          assert(sum('LinkDef'==class(linkDefs(1)))==7, 'Class type for link does not match');
+          assert(strcmp(class(linkDefs(1)), 'LinkDef'), 'Arguments are not of type LinkDef');
           robotDef.links = linkDefs;
           robotDef.num_links =length(linkDefs);
        end
