@@ -16,7 +16,14 @@ classdef LinkDef
            link.alpha = values(4);
            link.type = values(5);
         end
-        function T = linkTransform()
+        function [] = update(obj, val)
+           if obj.type==0
+               obj.theta = val;
+           else
+               obj.d = val
+           end
+        end
+        function T = linkTransform(obj)
            T = tf.rotz_t(obj.theta)*tf.translate(0, 0, obj.d)*tf.translate(obj.a, 0, 0)*tf.rotx_t(obj.alpha); 
         end
     end

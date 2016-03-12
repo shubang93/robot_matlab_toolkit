@@ -4,26 +4,22 @@ classdef RobotDef
        num_links
    end
    methods (Access=private)
-        function [] = updateJointState(jointStates) 
+        function [] = updateJointState(obj, jointStates) 
             for i=1:obj.num_links
-               if obj.links(i).type==0 
-                   obj.links(i).theta = jointStates(i);
-               else
-                   obj.links(i).d = jointStates(i);
-               end
+               obj.links(i).update(jointStates(i));
             end
        end
    end
    methods (Access=public)
        function robotDef = RobotDef(linkDefs)
-%           assert(class(LinkDef) == class(linkDefs(1)), 'Argument has to be of type LinkDef');
+%           assert(linkDefs(1).IsOfClass('LinkDef')==0, 'Class type for link does not match');
           robotDef.links = linkDefs;
           robotDef.num_links =length(linkDefs);
        end
        
-       function T = fwdKinematics(jointStates)
-          assert(length(joinStates)==obj.num_links, 'Number of joints do not match robot joints');
-          obj.updateJointState(jointStates);
+       function T = fwdKinematics(obj, jointStates)
+          assert(length(jointStates)==obj.num_links, 'Number of joints do not match robot joints');
+          obj.updateJointState(obj, jointStates);
           T = makehgtform;
           for i=1:obj.num_links
               T = T*obj.links(i).linkTransform();
