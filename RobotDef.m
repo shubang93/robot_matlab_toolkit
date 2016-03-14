@@ -50,7 +50,14 @@ classdef RobotDef < handle
           s3 = sqrt(1-c3^2);
           JointAngles(4) = atan2(s3, c3);
           
-          JointAngles(3) = atan2(z-l(1), sqrt(x^2+y^2))-atan2(l(3)*s3, l(2)+l(3)*c3);
+          k1 = l(2) + l(3)*c3;
+          k2 = l(3)*s3;
+          d = sqrt(k1^2+k2^2);
+          gamma = atan2(k2, k1);
+          h = z-l(1);
+          r = sqrt(x^2+y^2);
+          
+          JointAngles(3) = atan2(h,r)+gamma;
           
        end
    end
