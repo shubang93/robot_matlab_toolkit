@@ -60,5 +60,12 @@ classdef RobotDef < handle
           JointAngles(3) = atan2(h,r)+gamma;
           
        end
+       
+       function joint_state = currentJointState(obj)
+           joint_state = zeros(1, obj.num_links);
+          for i=1:obj.num_links
+              joint_state(i) = obj.links(i).currentState();
+          end
+       end
    end
 end

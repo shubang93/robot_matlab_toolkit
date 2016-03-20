@@ -26,6 +26,12 @@ classdef LinkDef < handle
         function T = linkTransform(obj)
            T = tf.rotz_t(obj.theta)*tf.translate(0, 0, obj.d)*tf.translate(obj.a, 0, 0)*tf.rotx_t(obj.alpha); 
         end
+        function q = currentJointState(obj)
+            if obj.type==0
+                q = obj.theta;
+            else
+                q = obj.d;
+        end
     end
 end
 
