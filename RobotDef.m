@@ -2,6 +2,12 @@ classdef RobotDef < handle
    properties
        links
        num_links
+%        jacobian =
+%  
+% [ -sin(theta1)*(l2*cos(theta2) + l3*cos(theta2 - theta3)), -cos(theta1)*(l2*sin(theta2) + l3*sin(theta2 - theta3)), l3*sin(theta2 - theta3)*cos(theta1)]
+% [  cos(theta1)*(l2*cos(theta2) + l3*cos(theta2 - theta3)), -sin(theta1)*(l2*sin(theta2) + l3*sin(theta2 - theta3)), l3*sin(theta2 - theta3)*sin(theta1)]
+% [                                                       0,                l2*cos(theta2) + l3*cos(theta2 - theta3),            -l3*cos(theta2 - theta3)]
+ 
    end
    methods (Access=private)
         function [] = updateJointState(obj, jointStates) 
@@ -27,28 +33,28 @@ classdef RobotDef < handle
        end
        
        function JointAngles = invKinematics_3(obj, goalState)
-          assert(obj.num_links==4, 'Need number of robot links to be 4. Do not forget the base to joint1 link');
+          assert(obj.num_links==3, 'Need number of robot links to be 3');
           for i=1:obj.num_links
               assert(obj.links(i).type==0, 'All links must be revolute type');
           end
-          JointAngles = zeros(1, 4);
+          JointAngles = zeros(1, 3);
           x = goalState(1, 4);
           y = goalState(2, 4);
           z = goalState(3, 4);
           l = zeros(1, 3);
-          for i=2:4
+          for i=1:3
              if(obj.links(i).alpha==0 || obj.links(i).alpha==pi || obj.links(i).alpha==-pi)
-                 l(i-1) = obj.links(i).a;
+                 l(i) = obj.links(i).a;
              else
-                 l(i-1) = obj.links(i).d;
+                 l(i) = obj.links(i).d;
              end
           end
           
-          JointAngles(2) = atan2(y, x);
+          JointAngles(1) = atan2(y, x);
           
           c3 = (x^2+y^2+(z-l(1))^2-l(2)^2-l(3)^2)/(2*l(2)*l(3));
           s3 = sqrt(1-c3^2);
-          JointAngles(4) = atan2(s3, c3);
+          JointAngles(3) = atan2(s3, c3);
           
           k1 = l(2) + l(3)*c3;
           k2 = l(3)*s3;
@@ -57,7 +63,7 @@ classdef RobotDef < handle
           h = z-l(1);
           r = sqrt(x^2+y^2);
           
-          JointAngles(3) = atan2(h,r)+gamma;
+          JointAngles(2) = atan2(h,r)+gamma;
           
        end
        
