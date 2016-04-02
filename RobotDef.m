@@ -2,11 +2,6 @@ classdef RobotDef < handle
    properties
        links
        num_links
-%        jacobian =
-%  
-% [ -sin(theta1)*(l2*cos(theta2) + l3*cos(theta2 - theta3)), -cos(theta1)*(l2*sin(theta2) + l3*sin(theta2 - theta3)), l3*sin(theta2 - theta3)*cos(theta1)]
-% [  cos(theta1)*(l2*cos(theta2) + l3*cos(theta2 - theta3)), -sin(theta1)*(l2*sin(theta2) + l3*sin(theta2 - theta3)), l3*sin(theta2 - theta3)*sin(theta1)]
-% [                                                       0,                l2*cos(theta2) + l3*cos(theta2 - theta3),            -l3*cos(theta2 - theta3)]
  
    end
    methods (Access=private)
@@ -73,6 +68,21 @@ classdef RobotDef < handle
                   error('Point out of robot reach')
               end
           end
+       end
+       
+       function jacob3 = jacobian_3dof(obj, theta1, theta2, theta3)
+           l = zeros(1,3);
+          for i=1:3
+             if(obj.links(i).alpha==0 || obj.links(i).alpha==pi || obj.links(i).alpha==-pi)
+                 l(i) = obj.links(i).a;
+             else
+                 l(i) = obj.links(i).d;
+             end
+          end
+          jacob3 = [ -sin(theta1)*(l(2)*cos(theta2) + l(3)*cos(theta2 - theta3)), -cos(theta1)*(l(2)*sin(theta2) + l(3)*sin(theta2 - theta3)), l(3)*sin(theta2 - theta3)*cos(theta1);...
+                      cos(theta1)*(l(2)*cos(theta2) + l(3)*cos(theta2 - theta3)), -sin(theta1)*(l(2)*sin(theta2) + l(3)*sin(theta2 - theta3)), l(3)*sin(theta2 - theta3)*sin(theta1);...
+                                                                           0,               l(2)*cos(theta2) + l(3)*cos(theta2 - theta3),            -l(3)*cos(theta2 - theta3)];
+ 
        end
        
        function joint_state = currentJointState(obj)
