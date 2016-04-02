@@ -54,7 +54,11 @@ classdef RobotDef < handle
           
           c3 = (x^2+y^2+(z-l(1))^2-l(2)^2-l(3)^2)/(2*l(2)*l(3));
           s3 = sqrt(1-c3^2);
-          JointAngles(3) = atan2(s3, c3);
+          if isreal(s3)
+            JointAngles(3) = atan2(s3, c3);
+          else
+              error('Point not reachable by robot');
+          end
           
           k1 = l(2) + l(3)*c3;
           k2 = l(3)*s3;
@@ -64,7 +68,11 @@ classdef RobotDef < handle
           r = sqrt(x^2+y^2);
           
           JointAngles(2) = atan2(h,r)+gamma;
-          
+          for i=1:3
+              if JointAngles(i)>pi || JointAngles(i) < 0
+                  error('Point out of robot reach')
+              end
+          end
        end
        
        function joint_state = currentJointState(obj)
