@@ -15,7 +15,7 @@ function [] = runGrassy()
     
     goalState = makehgtform('translate', [0 60.0 50.3002]);
     final_js = robot.invKinematics_3(goalState)
-    robot.fwdKinematics([0,0,0], 0)
+    robot.fwdKinematics([0,0,0])
 %%  Initialize arduino object and servos
     a = arduino();
     servos = servo_initialize(a, 600*10^-6, 2450*10^-6, 4, [9, 10, 11, 6]);
@@ -37,7 +37,6 @@ function [] = runGrassy()
     
     goalState = makehgtform('translate', [0 60.0 50.3002]);
     final_js = robot.invKinematics_3(goalState)
-    final_js_check = grassy.ikine3(goalState)
     steps = 50;
     traj = traj_utils.joint_traj(init_js, final_js*180/pi, steps)
     for i=1:steps
