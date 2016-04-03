@@ -18,6 +18,7 @@ classdef RobotController_3DOF < handle
         end
     end
     methods (Access = public)
+        %%
         function robotController = RobotController_3DOF(pulse_duration, arduino_pin_list, links)
             assert(length(arduino_pin_list)==3, 'Program currently only supports 3 servo robots');
             assert(length(pulse_duration)==2, 'Pulse duration includes one min and one max. Length should be 2');
@@ -26,24 +27,29 @@ classdef RobotController_3DOF < handle
                 length(arduino_pin_list), arduino_pin_list);
             robotController.robot = RobotDef(links);
         end
-        function [] = writeJointPosition(obj, joinPos)
-            
-        end
-        function [] = go_home(obj)
-            for i=1:length(obj.joint_servos)
-                writePosition(obj.joint_servos(i), 0.5);
-                pause(0.5);
+        %%
+        function [] = writeJointPositions(obj, jointPos, delay)
+            if nargin <3
+                delay = 0.3;
+            end
+            assert(length(jointPos)==length(obj.joint_servos), 'JointPositions dont match number of servos');
+             for i=1:length(obj.joint_servos)
+                writePosition(obj.joint_servos(i), jointPos(i)/(pi));
+                obj.robot.updateJointState(jointPos);
+                pause(delay);
             end
         end
+        %%
+        function [] = go_home(obj)
+           obj.writeJointPositions([0 0 0]);
+        end
+        %%
         function [] = sweep_demo(obj)
             theta = 1;
             delta = 1;
             loop = 0;
             while loop<1000
-                for i=1:length(obj.joint_servos)
-                    writePosition(obj.joint_servos(i), theta/180);
-                end
-                pause(0.010);
+                obj.writeJointPositions([theta theta theta]*pi/180, 0.01);
                 theta = theta + delta;
                 if theta==179
                     delta = -1;
@@ -53,6 +59,7 @@ classdef RobotController_3DOF < handle
                 loop = loop+1;
             end
         end
+        %%
         function [] = move_jointSpace(obj, goalState, steps)
             if nargin <3
                 steps = 50;
@@ -61,10 +68,7 @@ classdef RobotController_3DOF < handle
             final_jointState = obj.robot.invKinematics_3(goalState);
             traj = traj_utils.joint_traj(init_jointState, final_jointState, steps);
             for i=1:steps
-                for j=1:length(obj.joint_servos)
-                        writePosition(obj.joint_servos(j), traj(i, j)/(pi));
-                end 
-                pause(0.01);
+                obj.writeJointPositions(traj(i,:), 0.01);
             end
         end
     end

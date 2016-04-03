@@ -5,11 +5,7 @@ classdef RobotDef < handle
  
    end
    methods (Access=private)
-        function [] = updateJointState(obj, jointStates) 
-            for i=1:obj.num_links
-               obj.links(i).update(jointStates(i));
-            end
-       end
+        
    end
    methods (Access=public)
        function robotDef = RobotDef(linkDefs)
@@ -17,7 +13,12 @@ classdef RobotDef < handle
           robotDef.links = linkDefs;
           robotDef.num_links =length(linkDefs);
        end
-       
+       function [] = updateJointState(obj, jointStates) 
+           assert(length(jointStates)==obj.num_links, 'Number of joints dont match number of links');
+            for i=1:obj.num_links
+               obj.links(i).update(jointStates(i));
+            end
+       end
        function T = fwdKinematics(obj, jointStates)
           assert(length(jointStates)==obj.num_links, 'Number of joints do not match robot joints');
           obj.updateJointState(jointStates);
