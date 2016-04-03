@@ -20,7 +20,7 @@ classdef LinkDef < handle
            if obj.type==0
                obj.theta = val;
            else
-               obj.d = val
+               obj.d = val;
            end
         end
         function T = linkTransform(obj)

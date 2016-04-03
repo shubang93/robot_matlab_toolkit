@@ -15,5 +15,9 @@ pause(2.0);
 %% Asking robot to go home first
 robot_controller.go_home();
 
+%% Going to a position in joint space movement
+goalState = makehgtform('translate', [0 60.0 50.3002]);
+robot_controller.move_jointSpace(goalState);
+
 %% Clearing all variables
 clear

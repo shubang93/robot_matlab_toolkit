@@ -26,9 +26,12 @@ classdef RobotController_3DOF < handle
                 length(arduino_pin_list), arduino_pin_list);
             robotController.robot = RobotDef(links);
         end
+        function [] = writeJointPosition(obj, joinPos)
+            
+        end
         function [] = go_home(obj)
             for i=1:length(obj.joint_servos)
-                writePosition(obj.joint_servos(i), 0.0);
+                writePosition(obj.joint_servos(i), 0.5);
                 pause(0.5);
             end
         end
@@ -40,6 +43,7 @@ classdef RobotController_3DOF < handle
                 for i=1:length(obj.joint_servos)
                     writePosition(obj.joint_servos(i), theta/180);
                 end
+                pause(0.010);
                 theta = theta + delta;
                 if theta==179
                     delta = -1;
@@ -47,6 +51,20 @@ classdef RobotController_3DOF < handle
                     delta = 1;
                 end
                 loop = loop+1;
+            end
+        end
+        function [] = move_jointSpace(obj, goalState, steps)
+            if nargin <3
+                steps = 50;
+            end
+            init_jointState = obj.robot.currentJointState();
+            final_jointState = obj.robot.invKinematics_3(goalState);
+            traj = traj_utils.joint_traj(init_jointState, final_jointState, steps);
+            for i=1:steps
+                for j=1:length(obj.joint_servos)
+                        writePosition(obj.joint_servos(j), traj(i, j)/(pi));
+                end 
+                pause(0.01);
             end
         end
     end
