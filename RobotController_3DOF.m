@@ -71,6 +71,11 @@ classdef RobotController_3DOF < handle
                 obj.writeJointPositions(traj(i,:), 0.01);
             end
         end
+        %%
+        function [] = move_cartesianSpace(obj, goalState)
+            initState = obj.robot.fwdKinematics(obj.robot.currentJointState());
+            vel_vec = goalState-initState;
+        end
     end
     
 end
